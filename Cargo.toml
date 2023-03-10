@@ -10,5 +10,5 @@ repository = "https://github.com/johanhelsing/bevy_crossbeam_event"
 version = "0.1.0"
 
 [dependencies]
-bevy = {version = "0.10", default-features = false}
-crossbeam-channel = "0.5"
+bevy = { version = "0.10", default-features = false }
+crossbeam-channel = "0.5" # matches bevy 0.10 for minimal dependencies
