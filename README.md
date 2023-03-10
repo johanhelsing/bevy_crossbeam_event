@@ -1,6 +1,9 @@
 # bevy_crossbeam_event
 
+[![crates.io](https://img.shields.io/crates/v/bevy_crossbeam_event.svg)](https://crates.io/crates/bevy_crossbeam_event)
 ![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)
+[![crates.io](https://img.shields.io/crates/d/bevy_crossbeam_event.svg)](https://crates.io/crates/bevy_crossbeam_event)
+[![docs.rs](https://img.shields.io/docsrs/bevy_crossbeam_event)](https://docs.rs/bevy_crossbeam_event)
 
 Fire Bevy events from crossbeam channels.
 
