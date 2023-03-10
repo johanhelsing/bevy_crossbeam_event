@@ -12,7 +12,7 @@ Useful if you need to handle callbacks in 3rd party libraries etc. like
 
 ## Usage
 
-Add the plugin to your app
+Add add events to your app using `.add_crossbeam_event::<EventType>`:
 
 ```rust ignore
 #[derive(Clone, Debug)]
@@ -25,14 +25,23 @@ impl Plugin for MyPlugin {
         app.add_system(handle_lobby_joined);
     }
 }
+```
 
+Fire events by using `Res<CrossbeamEventSender<EventType>>` (which can be
+cloned and sent into callbacks):
+
+```rust ignore
 fn setup(service: Res<ThirdPartyCode>, sender: Res<CrossbeamEventSender<LobbyJoined>>) {
     let sender = sender.clone();
     service.join_lobby(id, move |lobby| {
         sender.send(LobbyJoined(lobby));
     });
 }
+```
 
+Handle the events just like normal Bevy events (which they are):
+
+```
 fn handle_lobby_joined(mut lobby_joined_events: EventReader<LobbyJoined>) {
     for lobby in lobby_joined_events.iter() {
         info!("lobby joined: {lobby:?}");
