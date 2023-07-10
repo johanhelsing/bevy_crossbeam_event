@@ -41,7 +41,7 @@ fn setup(service: Res<ThirdPartyCode>, sender: Res<CrossbeamEventSender<LobbyJoi
 
 Handle the events just like normal Bevy events (which they are):
 
-```
+```rust ignore
 fn handle_lobby_joined(mut lobby_joined_events: EventReader<LobbyJoined>) {
     for lobby in lobby_joined_events.iter() {
         info!("lobby joined: {lobby:?}");
