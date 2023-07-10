@@ -31,7 +31,7 @@ impl CrossbeamEventApp for App {
         self.insert_resource(CrossbeamEventSender::<T>(sender));
         self.insert_resource(CrossbeamEventReceiver::<T>(receiver));
         self.add_event::<T>();
-        self.add_system(process_crossbeam_messages::<T>.in_base_set(CoreSet::PreUpdate));
+        self.add_systems(PreUpdate, process_crossbeam_messages::<T>);
         self
     }
 }
