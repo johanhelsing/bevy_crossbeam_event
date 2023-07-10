@@ -55,7 +55,8 @@ The `main` branch targets the latest bevy release.
 
 |bevy|bevy_crossbeam_event|
 |----|--------------------|
-|0.10|0.1, main           |
+|0.11|0.2, main           |
+|0.10|0.1                 |
 
 ## License
 
