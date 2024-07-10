@@ -9,9 +9,9 @@ impl<T: Event> CrossbeamEventSender<T> {
         let event = event.into();
         if let Err(err) = self.0.try_send(event) {
             match err {
-                // we have an unbounded channel, so this would only happen if we're out of memory
+                // We have an unbounded channel, so this would only happen if we're out of memory.
                 TrySendError::Full(_) => panic!("unable to send event, channel full"),
-                // This should only happen if callbacks happen as the app is shutting down, so we ignore it
+                // This should only happen if callbacks happen as the app is shutting down, so we ignore it.
                 TrySendError::Disconnected(_) => {}
             }
         };
