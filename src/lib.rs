@@ -22,7 +22,14 @@ impl<T: Event> CrossbeamEventSender<T> {
 struct CrossbeamEventReceiver<T: Event>(Receiver<T>);
 
 pub trait CrossbeamEventApp {
+    /// creates an `unbounded` crossbeam-channel and forwards incoming events `T` via `EventWriter<T>`
+    /// **Note:** Do not use in combination with `add_crossbeam_trigger`, as they won't share the same underlying channel.
+    #[deprecated(since = "0.7.0", note = "please use `add_crossbeam_trigger` instead")]
     fn add_crossbeam_event<T: Event>(&mut self) -> &mut Self;
+
+    /// creates an `unbounded` crossbeam-channel and forwards incoming events `T` via trigger to observers.
+    /// **Note:** Do not use in combination with `add_crossbeam_event`, as they won't share the same underlying channel.
+    fn add_crossbeam_trigger<T: Event>(&mut self) -> &mut Self;
 }
 
 impl CrossbeamEventApp for App {
@@ -32,6 +39,14 @@ impl CrossbeamEventApp for App {
         self.insert_resource(CrossbeamEventReceiver::<T>(receiver));
         self.add_event::<T>();
         self.add_systems(PreUpdate, process_crossbeam_messages::<T>);
+        self
+    }
+
+    fn add_crossbeam_trigger<T: Event>(&mut self) -> &mut Self {
+        let (sender, receiver) = crossbeam_channel::unbounded();
+        self.insert_resource(CrossbeamEventSender::<T>(sender));
+        self.insert_resource(CrossbeamEventReceiver::<T>(receiver));
+        self.add_systems(PreUpdate, process_crossbeam_messages_trigger::<T>);
         self
     }
 }
@@ -44,6 +59,25 @@ fn process_crossbeam_messages<T: Event>(
         match receiver.0.try_recv() {
             Ok(msg) => {
                 events.send(msg);
+            }
+            Err(TryRecvError::Disconnected) => {
+                panic!("sender resource dropped")
+            }
+            Err(TryRecvError::Empty) => {
+                break;
+            }
+        }
+    }
+}
+
+fn process_crossbeam_messages_trigger<T: Event>(
+    receiver: Res<CrossbeamEventReceiver<T>>,
+    mut commands: Commands,
+) {
+    loop {
+        match receiver.0.try_recv() {
+            Ok(msg) => {
+                commands.trigger(msg);
             }
             Err(TryRecvError::Disconnected) => {
                 panic!("sender resource dropped")
