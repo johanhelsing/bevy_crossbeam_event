@@ -15,7 +15,7 @@ Useful if you need to handle callbacks in 3rd party libraries etc. like
 Add add events to your app using `.add_crossbeam_event::<EventType>`:
 
 ```rust ignore
-#[derive(Clone, Debug)]
+#[derive(Event, Clone, Debug)]
 struct LobbyJoined(Lobby);
 
 impl Plugin for MyPlugin {
@@ -43,7 +43,7 @@ Handle the events just like normal Bevy events (which they are):
 
 ```rust ignore
 fn handle_lobby_joined(mut lobby_joined_events: EventReader<LobbyJoined>) {
-    for lobby in lobby_joined_events.iter() {
+    for lobby in lobby_joined_events.read() {
         info!("lobby joined: {lobby:?}");
     }
 }
