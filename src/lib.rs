@@ -43,7 +43,7 @@ fn process_crossbeam_messages<T: Event>(
     loop {
         match receiver.0.try_recv() {
             Ok(msg) => {
-                events.send(msg);
+                events.write(msg);
             }
             Err(TryRecvError::Disconnected) => {
                 panic!("sender resource dropped")
