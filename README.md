@@ -15,7 +15,7 @@ Useful if you need to handle callbacks in 3rd party libraries etc. like
 Add add events to your app using `.add_crossbeam_event::<EventType>`:
 
 ```rust ignore
-#[derive(Event, Clone, Debug)]
+#[derive(Message, Clone, Debug)]
 struct LobbyJoined(Lobby);
 
 impl Plugin for MyPlugin {
@@ -55,7 +55,8 @@ The `main` branch targets the latest bevy release.
 
 |bevy|bevy_crossbeam_event|
 |----|--------------------|
-|0.16| 0.8, main          |
+|0.17| 0.9, main          |
+|0.16| 0.8                |
 |0.15| 0.7                |
 |0.14| 0.6                |
 |0.13| 0.5                |
