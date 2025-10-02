@@ -22,7 +22,7 @@ impl Plugin for MyPlugin {
     fn build(&self, app: &mut App) {
         app.add_crossbeam_event::<LobbyJoined>();
         app.add_startup_system(setup);
-        app.add_system(handle_lobby_joined);
+        app.add_observer(handle_lobby_joined);
     }
 }
 ```
@@ -39,13 +39,11 @@ fn setup(service: Res<ThirdPartyCode>, sender: Res<CrossbeamEventSender<LobbyJoi
 }
 ```
 
-Handle the events just like normal Bevy events (which they are):
+Handle the events with observers:
 
 ```rust ignore
-fn handle_lobby_joined(mut lobby_joined_events: EventReader<LobbyJoined>) {
-    for lobby in lobby_joined_events.read() {
-        info!("lobby joined: {lobby:?}");
-    }
+fn handle_lobby_joined(lobby_joined: On<LobbyJoined>) {
+    info!("lobby joined: {:?}", lobby_joined.0);
 }
 ```
 
@@ -55,7 +53,8 @@ The `main` branch targets the latest bevy release.
 
 |bevy|bevy_crossbeam_event|
 |----|--------------------|
-|0.16| 0.8, main          |
+|0.17| 0.9, main          |
+|0.16| 0.8                |
 |0.15| 0.7                |
 |0.14| 0.6                |
 |0.13| 0.5                |

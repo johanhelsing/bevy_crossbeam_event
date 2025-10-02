@@ -22,28 +22,35 @@ impl<T: Event> CrossbeamEventSender<T> {
 struct CrossbeamEventReceiver<T: Event>(Receiver<T>);
 
 pub trait CrossbeamEventApp {
-    fn add_crossbeam_event<T: Event>(&mut self) -> &mut Self;
+    fn add_crossbeam_event<T>(&mut self) -> &mut Self
+    where
+        T: Event,
+        for<'a> <T as Event>::Trigger<'a>: Default;
 }
 
 impl CrossbeamEventApp for App {
-    fn add_crossbeam_event<T: Event>(&mut self) -> &mut Self {
+    fn add_crossbeam_event<T>(&mut self) -> &mut Self
+    where
+        T: Event,
+        for<'a> <T as Event>::Trigger<'a>: Default,
+    {
         let (sender, receiver) = crossbeam_channel::unbounded();
         self.insert_resource(CrossbeamEventSender::<T>(sender));
         self.insert_resource(CrossbeamEventReceiver::<T>(receiver));
-        self.add_event::<T>();
-        self.add_systems(PreUpdate, process_crossbeam_messages::<T>);
+        self.add_systems(PreUpdate, process_crossbeam_events::<T>);
         self
     }
 }
 
-fn process_crossbeam_messages<T: Event>(
-    receiver: Res<CrossbeamEventReceiver<T>>,
-    mut events: EventWriter<T>,
-) {
+fn process_crossbeam_events<T>(receiver: Res<CrossbeamEventReceiver<T>>, mut commands: Commands)
+where
+    T: Event,
+    for<'a> <T as Event>::Trigger<'a>: Default,
+{
     loop {
         match receiver.0.try_recv() {
-            Ok(msg) => {
-                events.write(msg);
+            Ok(event) => {
+                commands.trigger(event);
             }
             Err(TryRecvError::Disconnected) => {
                 panic!("sender resource dropped")
