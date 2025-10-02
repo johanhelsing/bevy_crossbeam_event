@@ -15,14 +15,14 @@ Useful if you need to handle callbacks in 3rd party libraries etc. like
 Add add events to your app using `.add_crossbeam_event::<EventType>`:
 
 ```rust ignore
-#[derive(Message, Clone, Debug)]
+#[derive(Event, Clone, Debug)]
 struct LobbyJoined(Lobby);
 
 impl Plugin for MyPlugin {
     fn build(&self, app: &mut App) {
         app.add_crossbeam_event::<LobbyJoined>();
         app.add_startup_system(setup);
-        app.add_system(handle_lobby_joined);
+        app.add_observer(handle_lobby_joined);
     }
 }
 ```
@@ -39,13 +39,11 @@ fn setup(service: Res<ThirdPartyCode>, sender: Res<CrossbeamEventSender<LobbyJoi
 }
 ```
 
-Handle the events just like normal Bevy events (which they are):
+Handle the events with observers:
 
 ```rust ignore
-fn handle_lobby_joined(mut lobby_joined_events: EventReader<LobbyJoined>) {
-    for lobby in lobby_joined_events.read() {
-        info!("lobby joined: {lobby:?}");
-    }
+fn handle_lobby_joined(lobby_joined: On<LobbyJoined>) {
+    info!("lobby joined: {:?}", lobby_joined.0);
 }
 ```
 
