@@ -63,6 +63,8 @@ The `main` branch targets the latest bevy release.
 |0.11| 0.2                |
 |0.10| 0.1                |
 
+In Bevy 0.17, events changed functionality and became what was previously known as "triggers", if you prefer the old behavior with asyncronous messages, check out [bevy_channel_message](https://github.com/rustunit/bevy_channel_message).
+
 ## License
 
 `bevy_crossbeam_event` is dual-licensed under either
